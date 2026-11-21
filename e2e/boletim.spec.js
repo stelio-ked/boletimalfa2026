@@ -72,4 +72,34 @@ test.describe('média geral do aluno selecionado', () => {
     await page.getByTestId('btn-limpar-simulacoes').click();
     await expect(media).toHaveText(inicial);
   });
+
+  test('a cor do selo segue a meta de 6,0 e acompanha as simulações', async ({ page }) => {
+    const media = await abrir(page);
+    const selo = page.getByTestId('selo-media-geral');
+
+    // Lê o valor exibido e confere a faixa e a cor do selo contra a regra (>= 6 verde, < 6 vermelho).
+    async function conferir() {
+      const valor = Number((await media.innerText()).replace(',', '.'));
+      const [r, g] = (await selo.evaluate((el) => getComputedStyle(el).color))
+        .match(/\d+(\.\d+)?/g).map(Number);
+      if (valor >= 6) {
+        await expect(selo).toHaveAttribute('data-faixa', 'aprovado');
+        expect(g, 'texto do selo deve ser verde').toBeGreaterThan(r);
+      } else {
+        await expect(selo).toHaveAttribute('data-faixa', 'abaixo');
+        expect(r, 'texto do selo deve ser vermelho').toBeGreaterThan(g);
+      }
+      return valor;
+    }
+
+    const inicial = await conferir();
+
+    // A simulação "mínimo para passar" leva a média para a faixa oposta ou a mantém na meta.
+    await page.getByTestId('btn-simular-minimo').click();
+    await expect(media).toHaveText(/^\d+,\d$/);
+    await conferir();
+
+    await page.getByTestId('btn-limpar-simulacoes').click();
+    expect(await conferir()).toBe(inicial);
+  });
 });
