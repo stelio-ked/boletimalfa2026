@@ -113,4 +113,36 @@ test.describe('média geral do aluno selecionado', () => {
     await page.getByTestId('btn-simular-minimo').click();
     await expect(selo).toHaveAttribute('title', texto);
   });
+
+  test('o aria-label do selo acompanha o valor exibido', async ({ page }) => {
+    const media = await abrir(page);
+    const selo = page.getByTestId('selo-media-geral');
+    const pills = page.getByTestId('seletor-alunos').locator('button');
+
+    // O aria-label sempre repete o valor que está na tela.
+    async function conferir() {
+      const valor = await media.innerText();
+      await expect(selo).toHaveAttribute('aria-label', `Média geral do aluno: ${valor}`);
+      return valor;
+    }
+
+    const inicial = await conferir();
+
+    if ((await pills.count()) >= 2) {
+      await pills.nth(1).click();
+      await expect(media).not.toHaveText(inicial);
+      await conferir();
+      await pills.nth(0).click();
+      await expect(media).toHaveText(inicial);
+      await conferir();
+    }
+
+    await page.getByTestId('btn-simular-realista').click();
+    await expect(media).not.toHaveText(inicial);
+    await conferir();
+
+    await page.getByTestId('btn-limpar-simulacoes').click();
+    await expect(media).toHaveText(inicial);
+    expect(await conferir()).toBe(inicial);
+  });
 });
