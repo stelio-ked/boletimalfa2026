@@ -107,12 +107,13 @@ jobs:
       github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write        # necessário para habilitar o automerge (mutation mergePullRequest)
       pull-requests: write
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false   # o job não faz push; o token só é usado pelo gh
       - name: Guardrails intactos?
         id: guard
         run: |
