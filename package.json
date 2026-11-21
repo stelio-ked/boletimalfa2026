@@ -1,0 +1,12 @@
+{
+  "name": "boletim-academico-2026",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Boletim Acadêmico Unificado 2026 (HTML único, sem build)",
+  "scripts": {
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0"
+  }
+}

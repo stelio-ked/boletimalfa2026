@@ -19,7 +19,9 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  APP_DIR: frontend   # pasta do package.json (use "." ou "apps/web" conforme o projeto)
+  # Pasta do app: detectada sozinha (raiz, senão frontend/). Para outra pasta (ex.: apps/web),
+  # crie a variável de repositório APP_DIR (Settings > Variables > Actions).
+  APP_DIR_VAR: ${{ vars.APP_DIR }}
 
 jobs:
   static:
@@ -33,23 +35,28 @@ jobs:
       - name: Detectar aplicação
         id: detect
         run: |
-          if [ -f "$APP_DIR/package.json" ]; then echo "app=true" >> "$GITHUB_OUTPUT"; else echo "app=false" >> "$GITHUB_OUTPUT"; echo "::notice::Sem $APP_DIR/package.json: verificações JS puladas."; fi
+          if [ -n "$APP_DIR_VAR" ]; then d="$APP_DIR_VAR"; elif [ -f package.json ]; then d="."; elif [ -f frontend/package.json ]; then d="frontend"; else d=""; fi
+          if [ -n "$d" ] && [ -f "$d/package.json" ]; then
+            echo "app=true" >> "$GITHUB_OUTPUT"; echo "dir=$d" >> "$GITHUB_OUTPUT"
+          else
+            echo "app=false" >> "$GITHUB_OUTPUT"; echo "::notice::Nenhum package.json encontrado: etapas JS puladas."
+          fi
       - name: Instalar dependências
         if: steps.detect.outputs.app == 'true'
-        working-directory: ${{ env.APP_DIR }}
+        working-directory: ${{ steps.detect.outputs.dir }}
         run: if [ -f package-lock.json ]; then npm ci; else npm install; fi
       - name: Camada 1 — compilador estrito (tsc)
         if: steps.detect.outputs.app == 'true'
-        working-directory: ${{ env.APP_DIR }}
-        run: npm run typecheck
+        working-directory: ${{ steps.detect.outputs.dir }}
+        run: npm run typecheck --if-present
       - name: Camada 2 — linter (sem warnings)
         if: steps.detect.outputs.app == 'true'
-        working-directory: ${{ env.APP_DIR }}
-        run: npm run lint
+        working-directory: ${{ steps.detect.outputs.dir }}
+        run: npm run lint --if-present
       - name: Camada 2 — grafo de importações (ciclos e imports entre features)
         if: steps.detect.outputs.app == 'true'
-        working-directory: ${{ env.APP_DIR }}
-        run: npm run depcheck
+        working-directory: ${{ steps.detect.outputs.dir }}
+        run: npm run depcheck --if-present
 
   tests:
     name: tests
@@ -62,22 +69,27 @@ jobs:
       - name: Detectar aplicação
         id: detect
         run: |
-          if [ -f "$APP_DIR/package.json" ]; then echo "app=true" >> "$GITHUB_OUTPUT"; else echo "app=false" >> "$GITHUB_OUTPUT"; echo "::notice::Sem $APP_DIR/package.json: testes JS pulados."; fi
+          if [ -n "$APP_DIR_VAR" ]; then d="$APP_DIR_VAR"; elif [ -f package.json ]; then d="."; elif [ -f frontend/package.json ]; then d="frontend"; else d=""; fi
+          if [ -n "$d" ] && [ -f "$d/package.json" ]; then
+            echo "app=true" >> "$GITHUB_OUTPUT"; echo "dir=$d" >> "$GITHUB_OUTPUT"
+          else
+            echo "app=false" >> "$GITHUB_OUTPUT"; echo "::notice::Nenhum package.json encontrado: etapas JS puladas."
+          fi
       - name: Instalar dependências
         if: steps.detect.outputs.app == 'true'
-        working-directory: ${{ env.APP_DIR }}
+        working-directory: ${{ steps.detect.outputs.dir }}
         run: if [ -f package-lock.json ]; then npm ci; else npm install; fi
       - name: Camada 3 — suíte completa de testes
         if: steps.detect.outputs.app == 'true'
-        working-directory: ${{ env.APP_DIR }}
-        run: npm test
+        working-directory: ${{ steps.detect.outputs.dir }}
+        run: npm test --if-present
       - name: Build
         if: steps.detect.outputs.app == 'true'
-        working-directory: ${{ env.APP_DIR }}
-        run: npm run build
+        working-directory: ${{ steps.detect.outputs.dir }}
+        run: npm run build --if-present
       - name: Testes E2E (se existirem)
         if: steps.detect.outputs.app == 'true'
-        working-directory: ${{ env.APP_DIR }}
+        working-directory: ${{ steps.detect.outputs.dir }}
         run: |
           if node -e "process.exit(require('./package.json').scripts?.['test:e2e'] ? 0 : 1)"; then
             npx playwright install --with-deps chromium

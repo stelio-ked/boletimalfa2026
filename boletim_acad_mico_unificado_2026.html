@@ -118,7 +118,7 @@
                         <span class="bg-brand-500/30 text-brand-100 border border-brand-400/30 text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
                             Alfa Pedra Branca • Sistema Unificado 2026
                         </span>
-                        <span id="dbStatusBadge" class="bg-emerald-500/20 text-emerald-200 border border-emerald-400/30 text-[11px] font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5">
+                        <span id="dbStatusBadge" data-testid="status-banco" class="bg-emerald-500/20 text-emerald-200 border border-emerald-400/30 text-[11px] font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5">
                             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Inicializando SQLite...
                         </span>
                     </div>
@@ -129,14 +129,14 @@
 
                 <!-- Controles do Banco de Dados SQLite -->
                 <div class="no-print flex flex-wrap items-center gap-2">
-                    <button onclick="exportSQLiteFile()" class="px-3 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/15 text-xs font-semibold rounded-xl transition flex items-center gap-1.5" title="Baixar arquivo binário .sqlite com todos os alunos">
+                    <button data-testid="btn-exportar-banco" onclick="exportSQLiteFile()" class="px-3 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/15 text-xs font-semibold rounded-xl transition flex items-center gap-1.5" title="Baixar arquivo binário .sqlite com todos os alunos">
                         <i class="fa-solid fa-database text-emerald-300"></i> Exportar Banco (.sqlite)
                     </button>
                     <label class="px-3 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/15 text-xs font-semibold rounded-xl transition flex items-center gap-1.5 cursor-pointer" title="Restaurar arquivo .sqlite salvo anteriormente">
                         <i class="fa-solid fa-upload text-brand-300"></i> Restaurar Backup (.sqlite)
-                        <input type="file" id="sqliteRestoreInput" accept=".sqlite,.db,application/x-sqlite3" class="hidden" onchange="handleSQLiteRestore(event)">
+                        <input type="file" id="sqliteRestoreInput" data-testid="input-restaurar-backup" accept=".sqlite,.db,application/x-sqlite3" class="hidden" onchange="handleSQLiteRestore(event)">
                     </label>
-                    <button id="btnDeleteStudent" onclick="openDeleteStudentModal()" class="hidden px-3 py-2 bg-rose-500/25 hover:bg-rose-500/40 text-rose-100 border border-rose-400/40 text-xs font-semibold rounded-xl transition flex items-center gap-1.5" title="Remover aluno selecionado do banco">
+                    <button id="btnDeleteStudent" data-testid="btn-excluir-aluno" onclick="openDeleteStudentModal()" class="hidden px-3 py-2 bg-rose-500/25 hover:bg-rose-500/40 text-rose-100 border border-rose-400/40 text-xs font-semibold rounded-xl transition flex items-center gap-1.5" title="Remover aluno selecionado do banco">
                         <i class="fa-solid fa-trash-can"></i> Excluir Aluno
                     </button>
                 </div>
@@ -144,12 +144,12 @@
 
             <!-- Linha Inferior: Seletor de Alunos (Pills) + Botão Importar Boletim -->
             <div class="pt-4 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-                <div class="flex flex-wrap items-center gap-2.5" id="studentSelectorContainer">
+                <div class="flex flex-wrap items-center gap-2.5" id="studentSelectorContainer" data-testid="seletor-alunos">
                     <!-- Pills geradas dinamicamente via JS -->
                 </div>
 
                 <div class="no-print flex items-center gap-2 shrink-0">
-                    <button onclick="openImportModal()" class="w-full sm:w-auto px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold text-xs sm:text-sm rounded-xl shadow-lg shadow-emerald-950/30 transition flex items-center justify-center gap-2">
+                    <button data-testid="btn-importar-boletim" onclick="openImportModal()" class="w-full sm:w-auto px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold text-xs sm:text-sm rounded-xl shadow-lg shadow-emerald-950/30 transition flex items-center justify-center gap-2">
                         <i class="fa-solid fa-file-import"></i> + Importar Boletim (PDF / OCR)
                     </button>
                 </div>
@@ -168,7 +168,7 @@
                 </div>
                 <div>
                     <div class="flex flex-wrap items-center gap-2">
-                        <h2 class="text-lg sm:text-xl font-extrabold font-heading text-slate-900" id="activeStudentName">
+                        <h2 class="text-lg sm:text-xl font-extrabold font-heading text-slate-900" id="activeStudentName" data-testid="active-student-name">
                             Letícia Ferreira Ked
                         </h2>
                         <span class="text-[11px] font-bold bg-brand-50 text-brand-700 border border-brand-200 px-2.5 py-0.5 rounded-full" id="activeStudentSegment">
@@ -176,9 +176,9 @@
                         </span>
                     </div>
                     <div class="text-xs sm:text-sm text-slate-600 mt-1 flex flex-wrap gap-x-5 gap-y-1">
-                        <span><i class="fa-solid fa-graduation-cap text-brand-600 me-1"></i>Turma: <strong class="text-slate-900" id="activeStudentTurma">7º ano A - M</strong></span>
-                        <span><i class="fa-solid fa-id-card text-brand-600 me-1"></i>Matrícula: <strong class="text-slate-900" id="activeStudentMatricula">22258351</strong></span>
-                        <span><i class="fa-solid fa-user-check text-emerald-600 me-1"></i>Frequência: <strong class="text-emerald-700" id="activeStudentFreq">85,47%</strong> <span class="text-slate-400 text-xs">(Mín. 75%)</span></span>
+                        <span><i class="fa-solid fa-graduation-cap text-brand-600 me-1"></i>Turma: <strong class="text-slate-900" id="activeStudentTurma" data-testid="active-student-turma">7º ano A - M</strong></span>
+                        <span><i class="fa-solid fa-id-card text-brand-600 me-1"></i>Matrícula: <strong class="text-slate-900" id="activeStudentMatricula" data-testid="active-student-matricula">22258351</strong></span>
+                        <span><i class="fa-solid fa-user-check text-emerald-600 me-1"></i>Frequência: <strong class="text-emerald-700" id="activeStudentFreq" data-testid="active-student-freq">85,47%</strong> <span class="text-slate-400 text-xs">(Mín. 75%)</span></span>
                         <span class="text-slate-400 text-xs flex items-center gap-1" id="activeStudentUpdated"><i class="fa-regular fa-clock"></i> Atualizado agora</span>
                     </div>
                 </div>
@@ -255,19 +255,19 @@
                 <span><strong>Simulação Persistente:</strong> Toda digitação salva automaticamente no SQLite deste aluno.</span>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-                <button onclick="applyMinimumToPass()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-sm transition flex items-center gap-1.5">
+                <button data-testid="btn-simular-minimo" onclick="applyMinimumToPass()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-sm transition flex items-center gap-1.5">
                     <i class="fa-solid fa-check-double"></i> Simular Mínimo p/ Passar (Média 6,0)
                 </button>
-                <button onclick="applyRealisticScenario()" class="px-3.5 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-xl shadow-sm transition flex items-center gap-1.5">
+                <button data-testid="btn-simular-realista" onclick="applyRealisticScenario()" class="px-3.5 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-xl shadow-sm transition flex items-center gap-1.5">
                     <i class="fa-solid fa-sliders"></i> Cenário Realista (PM4=3,5 | AQ4=4,2)
                 </button>
-                <button onclick="clearSimulationsForStudent()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 text-xs font-bold rounded-xl transition flex items-center gap-1.5">
+                <button data-testid="btn-limpar-simulacoes" onclick="clearSimulationsForStudent()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 text-xs font-bold rounded-xl transition flex items-center gap-1.5">
                     <i class="fa-solid fa-eraser"></i> Limpar Simulações (Só Oficiais)
                 </button>
-                <button onclick="openPrintPreview()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold rounded-xl shadow-sm transition flex items-center gap-1.5">
+                <button data-testid="btn-previa-impressao" onclick="openPrintPreview()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold rounded-xl shadow-sm transition flex items-center gap-1.5">
                     <i class="fa-solid fa-print"></i> Pré-visualizar A4 / Imprimir
                 </button>
-                <button onclick="downloadDirectPDF()" class="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl shadow-sm transition flex items-center gap-1.5">
+                <button data-testid="btn-baixar-pdf" onclick="downloadDirectPDF()" class="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl shadow-sm transition flex items-center gap-1.5">
                     <i class="fa-solid fa-file-pdf"></i> Baixar PDF Direto (.pdf)
                 </button>
             </div>
@@ -285,7 +285,7 @@
                     </p>
                 </div>
                 <div class="flex flex-wrap items-center gap-3 text-[11px] text-slate-600 shrink-0">
-                    <button type="button" id="btnToggleAllCycles" onclick="toggleAllPreviousCycles()" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-xl shadow-sm transition flex items-center gap-1.5">
+                    <button type="button" id="btnToggleAllCycles" data-testid="btn-alternar-ciclos" onclick="toggleAllPreviousCycles()" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-xl shadow-sm transition flex items-center gap-1.5">
                         <i class="fa-solid fa-up-right-and-down-left-from-center"></i> Expandir Ciclos 1, 2 e 3
                     </button>
                     <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-white border border-slate-300 inline-flex items-center justify-center text-[8px] text-slate-500"><i class="fa-solid fa-lock"></i></span> Oficial</span>
@@ -377,7 +377,7 @@
                         </p>
                     </div>
                 </div>
-                <button onclick="closeImportModal()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl transition flex items-center gap-1.5">
+                <button data-testid="btn-fechar-importacao" onclick="closeImportModal()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl transition flex items-center gap-1.5">
                     <i class="fa-solid fa-xmark"></i> Fechar
                 </button>
             </div>
@@ -387,7 +387,7 @@
                 
                 <!-- Área de Seleção de Arquivo -->
                 <div id="importDropZone" onclick="document.getElementById('boletimFileInput').click()" class="border-2 border-dashed border-brand-300 hover:border-brand-500 bg-white hover:bg-brand-50/40 rounded-2xl p-6 text-center cursor-pointer transition group">
-                    <input type="file" id="boletimFileInput" accept=".pdf,image/png,image/jpeg,image/jpg,image/webp" class="hidden" onchange="handleBoletimFileSelected(event)">
+                    <input type="file" id="boletimFileInput" data-testid="input-arquivo-boletim" accept=".pdf,image/png,image/jpeg,image/jpg,image/webp" class="hidden" onchange="handleBoletimFileSelected(event)">
                     <div class="w-14 h-14 rounded-2xl bg-brand-100 text-brand-600 group-hover:scale-105 transition flex items-center justify-center text-2xl mx-auto mb-3">
                         <i class="fa-solid fa-cloud-arrow-up"></i>
                     </div>
@@ -432,7 +432,7 @@
                             </h4>
                             <div class="flex items-center gap-2">
                                 <label for="importTargetStudentSelect" class="text-xs font-bold text-slate-600">Destino no SQLite:</label>
-                                <select id="importTargetStudentSelect" onchange="onImportTargetChange()" class="text-xs font-bold bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <select id="importTargetStudentSelect" data-testid="select-aluno-destino" onchange="onImportTargetChange()" class="text-xs font-bold bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
                                     <!-- Opções geradas via JS -->
                                 </select>
                             </div>
@@ -441,23 +441,23 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
                             <div class="lg:col-span-2">
                                 <label class="block font-bold text-slate-600 mb-1">Nome Completo</label>
-                                <input type="text" id="impNome" oninput="updateImportPreviewHighlights()" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-semibold text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <input type="text" id="impNome" data-testid="input-nome-importacao" oninput="updateImportPreviewHighlights()" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-semibold text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500">
                             </div>
                             <div>
                                 <label class="block font-bold text-slate-600 mb-1">Matrícula (Chave Única)</label>
-                                <input type="text" id="impMatricula" oninput="onImportMatriculaInput()" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <input type="text" id="impMatricula" data-testid="input-matricula-importacao" oninput="onImportMatriculaInput()" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500">
                             </div>
                             <div>
                                 <label class="block font-bold text-slate-600 mb-1">Turma</label>
-                                <input type="text" id="impTurma" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-semibold text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <input type="text" id="impTurma" data-testid="input-turma-importacao" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-semibold text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500">
                             </div>
                             <div>
                                 <label class="block font-bold text-slate-600 mb-1">Frequência (%)</label>
-                                <input type="number" step="0.01" min="0" max="100" id="impFrequencia" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-bold text-emerald-700 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <input type="number" step="0.01" min="0" max="100" id="impFrequencia" data-testid="input-frequencia-importacao" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-bold text-emerald-700 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500">
                             </div>
                             <div class="sm:col-span-2 lg:col-span-5">
                                 <label class="block font-bold text-slate-600 mb-1">Segmento</label>
-                                <input type="text" id="impSegmento" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-semibold text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <input type="text" id="impSegmento" data-testid="input-segmento-importacao" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-semibold text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500">
                             </div>
                         </div>
                     </div>
@@ -473,7 +473,7 @@
                                     Células destacadas em <span class="bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.2 rounded">verde esmeralda</span> são novidades ou alterações em relação ao banco atual.
                                 </p>
                             </div>
-                            <button onclick="addEmptyImportRow()" class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold rounded-lg transition flex items-center gap-1 self-start sm:self-auto">
+                            <button data-testid="btn-adicionar-disciplina" onclick="addEmptyImportRow()" class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold rounded-lg transition flex items-center gap-1 self-start sm:self-auto">
                                 <i class="fa-solid fa-plus"></i> Adicionar Disciplina
                             </button>
                         </div>
@@ -509,10 +509,10 @@
 
                     <!-- Botão Final de Confirmação UPSERT -->
                     <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-1">
-                        <button onclick="closeImportModal()" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold rounded-xl transition">
+                        <button data-testid="btn-cancelar-importacao" onclick="closeImportModal()" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold rounded-xl transition">
                             Cancelar
                         </button>
-                        <button onclick="confirmImportUpsert()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-extrabold rounded-xl shadow-md transition flex items-center justify-center gap-2">
+                        <button data-testid="btn-confirmar-importacao" onclick="confirmImportUpsert()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-extrabold rounded-xl shadow-md transition flex items-center justify-center gap-2">
                             <i class="fa-solid fa-floppy-disk"></i> Confirmar e Substituir no Banco
                         </button>
                     </div>
@@ -540,10 +540,10 @@
                 Deseja remover este estudante?
             </p>
             <div class="flex items-center justify-end gap-2 pt-1">
-                <button onclick="closeDeleteStudentModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-xl transition">
+                <button data-testid="btn-cancelar-exclusao" onclick="closeDeleteStudentModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-xl transition">
                     Cancelar
                 </button>
-                <button onclick="confirmDeleteActiveStudent()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl shadow transition">
+                <button data-testid="btn-confirmar-exclusao" onclick="confirmDeleteActiveStudent()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl shadow transition">
                     Sim, Excluir Aluno
                 </button>
             </div>
@@ -572,16 +572,16 @@
                 </div>
 
                 <div class="flex flex-wrap items-center gap-2">
-                    <button onclick="triggerNativePrint()" class="px-3 py-2 bg-white text-slate-900 hover:bg-slate-100 text-xs font-bold rounded-xl shadow transition flex items-center gap-1.5">
+                    <button data-testid="btn-imprimir" onclick="triggerNativePrint()" class="px-3 py-2 bg-white text-slate-900 hover:bg-slate-100 text-xs font-bold rounded-xl shadow transition flex items-center gap-1.5">
                         <i class="fa-solid fa-print text-brand-600"></i> Tentar Imprimir Agora
                     </button>
-                    <button onclick="downloadDirectPDF()" class="px-3 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl shadow transition flex items-center gap-1.5">
+                    <button data-testid="btn-baixar-pdf-previa" onclick="downloadDirectPDF()" class="px-3 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl shadow transition flex items-center gap-1.5">
                         <i class="fa-solid fa-file-pdf"></i> Baixar PDF Direto (.pdf)
                     </button>
-                    <button onclick="downloadPrintableHTML()" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow transition flex items-center gap-1.5">
+                    <button data-testid="btn-baixar-html" onclick="downloadPrintableHTML()" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow transition flex items-center gap-1.5">
                         <i class="fa-solid fa-file-code"></i> Baixar Folha p/ Imprimir (.html)
                     </button>
-                    <button onclick="closePrintPreview()" class="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold rounded-xl transition flex items-center gap-1.5">
+                    <button data-testid="btn-fechar-previa" onclick="closePrintPreview()" class="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold rounded-xl transition flex items-center gap-1.5">
                         <i class="fa-solid fa-xmark"></i> Fechar
                     </button>
                 </div>
@@ -1295,6 +1295,7 @@
                 const isSelected = st.matricula === activeMatricula;
                 const btn = document.createElement('button');
                 btn.type = 'button';
+                btn.dataset.testid = 'btn-aluno-' + st.matricula;
                 btn.onclick = () => {
                     activeMatricula = st.matricula;
                     expandedRows.clear();
@@ -1690,6 +1691,7 @@
                     return `
                         <div class="inline-flex flex-col items-center">
                             <input type="number" inputmode="decimal" step="0.1" min="0" max="${maxVal}"
+                                data-testid="input-simulacao-${simField}"
                                 value="${hasSim ? simVal : ''}"
                                 placeholder="-"
                                 data-disc="${escapeHTML(row.disciplina)}"
@@ -1758,7 +1760,7 @@
                 tr.innerHTML = `
                     <td class="py-3 px-3 sm:px-4">
                         <div class="flex items-center gap-2">
-                            <button type="button" data-disc="${escapeHTML(row.disciplina)}" onclick="toggleRowDetail(this.dataset.disc)"
+                            <button type="button" data-testid="btn-detalhe-disciplina" data-disc="${escapeHTML(row.disciplina)}" onclick="toggleRowDetail(this.dataset.disc)"
                                 title="${isRowExpanded ? 'Recolher detalhes desta disciplina' : 'Expandir todas as notas desta disciplina'}"
                                 class="w-6 h-6 rounded-md ${isRowExpanded ? 'bg-brand-600 text-white' : 'bg-slate-100 hover:bg-brand-100 text-slate-500 hover:text-brand-700'} flex items-center justify-center text-[10px] transition shrink-0">
                                 <i class="fa-solid ${isRowExpanded ? 'fa-chevron-down' : 'fa-chevron-right'}"></i>
@@ -2724,7 +2726,7 @@
 
                 cellsHtml += `
                     <td class="py-1.5 px-2 text-center">
-                        <button type="button" onclick="removeImportRow(${rowIdx})" class="text-rose-500 hover:text-rose-700 p-1" title="Remover linha">
+                        <button type="button" data-testid="btn-remover-linha-importacao" onclick="removeImportRow(${rowIdx})" class="text-rose-500 hover:text-rose-700 p-1" title="Remover linha">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </td>
