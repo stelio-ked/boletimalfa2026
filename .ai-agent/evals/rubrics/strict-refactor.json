@@ -1,0 +1,11 @@
+{
+  "id": "strict-refactor",
+  "description": "Rubrica objetiva (0 a 10) para a skill strict-refactor.",
+  "criteria": [
+    { "id": "sem-any-ts-ignore-ou-bypass", "type": "auto", "check": "noForbiddenPatterns", "points": 3 },
+    { "id": "alterou-o-arquivo-pedido", "type": "auto", "check": "changedExpectedFiles", "points": 1 },
+    { "id": "rodou-a-verificacao", "type": "auto", "check": "verificationRun", "points": 2 },
+    { "id": "tipos-precisos", "type": "judge", "points": 2, "description": "Os tipos novos são precisos (interfaces, uniões discriminadas, unknown com estreitamento) e não apenas renomeiam o problema." },
+    { "id": "comportamento-preservado", "type": "judge", "points": 2, "description": "O diff mantém o comportamento original (mesmas entradas e saídas) e não remove validações existentes." }
+  ]
+}

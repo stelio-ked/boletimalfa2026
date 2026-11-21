@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"]
+    },
+    "shell-verifier": {
+      "command": "node",
+      "args": ["./.ai-agent/helpers/mcp-shell-verifier.js"]
+    }
+  }
+}

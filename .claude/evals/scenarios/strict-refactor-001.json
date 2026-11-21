@@ -1,0 +1,11 @@
+{
+  "id": "strict-refactor-001",
+  "skill": "strict-refactor",
+  "rubric": "strict-refactor",
+  "fixture": "fixtures/strict-refactor-001",
+  "prompt": "Refatore src/features/orders/orders.ts para ter tipagem estrita, mantendo exatamente o mesmo comportamento.",
+  "checks": {
+    "mustChange": ["src/features/orders/orders.ts"],
+    "forbiddenPatterns": ["\\bany\\b", "@ts-ignore", "@ts-nocheck", "@ts-expect-error", "as unknown as", "eslint-disable"]
+  }
+}

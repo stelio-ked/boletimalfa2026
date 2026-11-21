@@ -1,0 +1,11 @@
+{
+  "id": "feature-map-first-001",
+  "skill": "feature-map",
+  "rubric": "feature-map-first",
+  "fixture": "fixtures/feature-map-first-001",
+  "prompt": "Na tela de projetos, troque o texto do botão de criar para \"Novo projeto\" e adicione, ao lado dele, um botão \"Exportar\".",
+  "checks": {
+    "mustChange": ["src/features/projects/ProjectList.tsx", ".ai-agent/feature_map.md"],
+    "forbiddenPatterns": ["\\bany\\b", "@ts-ignore", "@ts-nocheck", "eslint-disable"]
+  }
+}

@@ -1,0 +1,121 @@
+# CI duro + automerge seguro (Padrão Ked).
+# Camadas: 1 compilador (tsc strict) e 2 linter/grafo de imports = falha dura; 3 testes = falha dura.
+# O automerge é OPT-IN: só PRs com o label "automerge" e que não alterem os guardrails.
+# Pré-requisitos no repositório (Settings):
+#   - General > "Allow auto-merge" ligado;
+#   - Branch protection/ruleset da main exigindo os checks: static, tests e ai-check.
+# O merge de fato é feito pelo GitHub quando TODOS os checks exigidos ficam verdes.
+name: agent-ci-automerge
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, labeled]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agent-ci-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  APP_DIR: frontend   # pasta do package.json (use "." ou "apps/web" conforme o projeto)
+
+jobs:
+  static:
+    name: static
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - name: Detectar aplicação
+        id: detect
+        run: |
+          if [ -f "$APP_DIR/package.json" ]; then echo "app=true" >> "$GITHUB_OUTPUT"; else echo "app=false" >> "$GITHUB_OUTPUT"; echo "::notice::Sem $APP_DIR/package.json: verificações JS puladas."; fi
+      - name: Instalar dependências
+        if: steps.detect.outputs.app == 'true'
+        working-directory: ${{ env.APP_DIR }}
+        run: if [ -f package-lock.json ]; then npm ci; else npm install; fi
+      - name: Camada 1 — compilador estrito (tsc)
+        if: steps.detect.outputs.app == 'true'
+        working-directory: ${{ env.APP_DIR }}
+        run: npm run typecheck
+      - name: Camada 2 — linter (sem warnings)
+        if: steps.detect.outputs.app == 'true'
+        working-directory: ${{ env.APP_DIR }}
+        run: npm run lint
+      - name: Camada 2 — grafo de importações (ciclos e imports entre features)
+        if: steps.detect.outputs.app == 'true'
+        working-directory: ${{ env.APP_DIR }}
+        run: npm run depcheck
+
+  tests:
+    name: tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - name: Detectar aplicação
+        id: detect
+        run: |
+          if [ -f "$APP_DIR/package.json" ]; then echo "app=true" >> "$GITHUB_OUTPUT"; else echo "app=false" >> "$GITHUB_OUTPUT"; echo "::notice::Sem $APP_DIR/package.json: testes JS pulados."; fi
+      - name: Instalar dependências
+        if: steps.detect.outputs.app == 'true'
+        working-directory: ${{ env.APP_DIR }}
+        run: if [ -f package-lock.json ]; then npm ci; else npm install; fi
+      - name: Camada 3 — suíte completa de testes
+        if: steps.detect.outputs.app == 'true'
+        working-directory: ${{ env.APP_DIR }}
+        run: npm test
+      - name: Build
+        if: steps.detect.outputs.app == 'true'
+        working-directory: ${{ env.APP_DIR }}
+        run: npm run build
+      - name: Testes E2E (se existirem)
+        if: steps.detect.outputs.app == 'true'
+        working-directory: ${{ env.APP_DIR }}
+        run: |
+          if node -e "process.exit(require('./package.json').scripts?.['test:e2e'] ? 0 : 1)"; then
+            npx playwright install --with-deps chromium
+            npm run test:e2e
+          else
+            echo "::notice::Sem script test:e2e."
+          fi
+
+  automerge:
+    name: automerge
+    needs: [static, tests]
+    if: >-
+      contains(github.event.pull_request.labels.*.name, 'automerge') &&
+      !github.event.pull_request.draft &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Guardrails intactos?
+        id: guard
+        run: |
+          base="origin/${{ github.event.pull_request.base.ref }}"
+          touched=$(git diff --name-only "$base...HEAD" | grep -E '^(\.github/|\.husky/|\.ai-agent/(policy|helpers|evals|hooks)/|AGENTS\.md$)|(^|/)(eslint\.config\.js|tsconfig\.json|\.dependency-cruiser\.cjs)$' || true)
+          if [ -n "$touched" ]; then
+            echo "touched=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::PR altera guardrails; automerge desligado, precisa de revisão humana:"
+            echo "$touched"
+          else
+            echo "touched=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Habilitar automerge (squash)
+        if: steps.guard.outputs.touched == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: gh pr merge --auto --squash "$PR_URL"

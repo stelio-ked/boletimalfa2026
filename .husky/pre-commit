@@ -1,0 +1,13 @@
+#!/bin/sh
+# Barra commits que não passam nas verificações estáticas do Padrão Ked.
+# Ativado por: git config core.hooksPath .husky (o install.py faz isso).
+set -e
+cd "$(git rev-parse --show-toplevel)"
+
+PY=$(command -v python3 || command -v python || true)
+if [ -n "$PY" ]; then
+  "$PY" .ai-agent/scripts/sync_adapters.py --check
+  "$PY" .ai-agent/scripts/check_md_locations.py
+fi
+
+node .ai-agent/helpers/verify.js --static --allow-empty

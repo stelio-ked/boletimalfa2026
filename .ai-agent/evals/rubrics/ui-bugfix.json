@@ -1,0 +1,12 @@
+{
+  "id": "ui-bugfix",
+  "description": "Rubrica objetiva (0 a 10) para a skill ui-bugfix.",
+  "criteria": [
+    { "id": "leu-feature-map-antes-de-editar", "type": "auto", "check": "readFeatureMap", "points": 2 },
+    { "id": "corrigiu-o-arquivo-certo", "type": "auto", "check": "changedExpectedFiles", "points": 1 },
+    { "id": "sem-bypass-de-tipos-ou-lint", "type": "auto", "check": "noForbiddenPatterns", "points": 2 },
+    { "id": "rodou-a-verificacao", "type": "auto", "check": "verificationRun", "points": 2 },
+    { "id": "causa-raiz-comprovada", "type": "judge", "points": 2, "description": "A resposta final cita o arquivo (e idealmente a linha) onde está a causa raiz e explica por que o bug acontece, sem chute." },
+    { "id": "correcao-minima-e-com-teste", "type": "judge", "points": 1, "description": "A correção é mínima, trata a causa (não esconde o sintoma) e inclui ou ajusta um teste que cobre o caso do relato." }
+  ]
+}

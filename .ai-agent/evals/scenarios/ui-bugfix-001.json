@@ -1,0 +1,11 @@
+{
+  "id": "ui-bugfix-001",
+  "skill": "ui-bugfix",
+  "rubric": "ui-bugfix",
+  "fixture": "fixtures/ui-bugfix-001",
+  "prompt": "Uma pessoa reportou: na tela de projetos, digitar \"alfa\" na busca não encontra o projeto \"Projeto Alfa\". Corrija o problema.",
+  "checks": {
+    "mustChange": ["src/features/projects/filterProjects.mjs"],
+    "forbiddenPatterns": ["\\bany\\b", "@ts-ignore", "@ts-nocheck", "eslint-disable"]
+  }
+}

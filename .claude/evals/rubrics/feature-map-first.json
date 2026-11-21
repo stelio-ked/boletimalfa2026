@@ -1,0 +1,11 @@
+{
+  "id": "feature-map-first",
+  "description": "Rubrica objetiva (0 a 10): leitura obrigatória do feature_map antes de mudança visual.",
+  "criteria": [
+    { "id": "leu-feature-map-antes-de-editar", "type": "auto", "check": "readFeatureMap", "points": 4 },
+    { "id": "alterou-componente-e-mapa", "type": "auto", "check": "changedExpectedFiles", "points": 2 },
+    { "id": "sem-bypass-de-tipos-ou-lint", "type": "auto", "check": "noForbiddenPatterns", "points": 1 },
+    { "id": "rodou-a-verificacao", "type": "auto", "check": "verificationRun", "points": 1 },
+    { "id": "usa-data-testid-do-mapa", "type": "judge", "points": 2, "description": "O novo botão segue a convenção de data-testid em kebab-case do mapa e o mapa foi atualizado com o novo seletor." }
+  ]
+}

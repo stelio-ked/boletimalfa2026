@@ -1,0 +1,4 @@
+.root { display: grid; gap: 0.75rem; max-width: 28rem; }
+.filters { display: flex; gap: 0.5rem; }
+.item { display: flex; gap: 0.5rem; align-items: center; }
+.done { text-decoration: line-through; opacity: 0.6; }
