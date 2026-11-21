@@ -8,8 +8,14 @@
 
 | Módulo | O que a pessoa faz | Rota | Seletores DOM (`data-testid`) | Componente principal | Verificação |
 | --- | --- | --- | --- | --- | --- |
-| EXEMPLO Autenticação | Entra na conta | `/login` | `input-email`, `input-password`, `btn-submit` | `src/features/auth/LoginForm.tsx` | playwright: fluxo de login |
-| EXEMPLO Projetos | Vê e cria projetos | `/dashboard/projects` | `project-card`, `btn-create-project` | `src/features/projects/ProjectList.tsx` | playwright: lista e criação |
+| Cabeçalho / banco | Vê o estado do banco, exporta e restaura backup `.sqlite` | `file://` (página única, sem rotas) | `status-banco`, `btn-exportar-banco`, `input-restaurar-backup` | `boletim_acad_mico_unificado_2026.html` (`initDatabase`, `exportSQLiteFile`, `handleSQLiteRestore`) | playwright: banco carrega, sem erro no console (`e2e/boletim.spec.js`) |
+| Seletor de alunos | Troca o aluno ativo; abre importação ou exclusão | idem | `seletor-alunos`, `btn-aluno-<matricula>`, `btn-importar-boletim`, `btn-excluir-aluno` | `boletim_acad_mico_unificado_2026.html` (`renderStudentSelector`) | playwright: pills renderizadas |
+| Identificação do aluno | Lê nome, turma, matrícula e frequência do aluno ativo | idem | `active-student-name`, `active-student-turma`, `active-student-matricula`, `active-student-freq` | `boletim_acad_mico_unificado_2026.html` (`renderAll`) | playwright: nome preenchido |
+| Simulação e relatório | Simula notas, limpa simulações, imprime ou baixa PDF | idem | `btn-simular-minimo`, `btn-simular-realista`, `btn-limpar-simulacoes`, `btn-previa-impressao`, `btn-baixar-pdf` | `boletim_acad_mico_unificado_2026.html` (`applyMinimumToPass`, `applyRealisticScenario`, `openPrintPreview`) | manual / a cobrir |
+| Tabela de notas | Edita notas simuladas por ciclo e expande disciplinas | idem | `input-simulacao-<campo>`, `btn-detalhe-disciplina`, `btn-alternar-ciclos` | `boletim_acad_mico_unificado_2026.html` (`handleSimInput`, `toggleRowDetail`, `toggleAllPreviousCycles`) | manual / a cobrir |
+| Modal Importar Boletim | Envia PDF/imagem (OCR), confere e grava os dados | modal `#importModal` | `input-arquivo-boletim`, `select-aluno-destino`, `input-nome-importacao`, `input-matricula-importacao`, `input-turma-importacao`, `input-frequencia-importacao`, `input-segmento-importacao`, `btn-adicionar-disciplina`, `btn-remover-linha-importacao`, `btn-confirmar-importacao`, `btn-cancelar-importacao`, `btn-fechar-importacao` | `boletim_acad_mico_unificado_2026.html` (`openImportModal`, `confirmImportUpsert`) | manual / a cobrir |
+| Modal Excluir Aluno | Confirma ou cancela a exclusão do aluno ativo | modal `#deleteStudentModal` | `btn-confirmar-exclusao`, `btn-cancelar-exclusao` | `boletim_acad_mico_unificado_2026.html` (`confirmDeleteActiveStudent`) | manual / a cobrir |
+| Modal Pré-visualização A4 | Imprime ou baixa PDF/HTML do boletim simulado | modal `#printPreviewModal` | `btn-imprimir`, `btn-baixar-pdf-previa`, `btn-baixar-html`, `btn-fechar-previa` | `boletim_acad_mico_unificado_2026.html` (`downloadPrintableHTML`, `closePrintPreview`) | manual / a cobrir |
 
 Regra: cada tela tem uma linha; cada elemento interativo tem `data-testid` em `kebab-case` (`<ação-ou-campo>-<contexto>`).
 
@@ -17,13 +23,13 @@ Regra: cada tela tem uma linha; cada elemento interativo tem `data-testid` em `k
 
 | Atalho | Onde vale | Efeito | Arquivo |
 | --- | --- | --- | --- |
-| EXEMPLO `Ctrl+K` | Qualquer tela | Abre a busca | `src/features/search/useSearchShortcut.ts` |
+| `Esc` | Qualquer modal aberto | Fecha importação, exclusão e pré-visualização | `boletim_acad_mico_unificado_2026.html` (listener `keydown`) |
 
 ## 3. Fluxos de estado
 
 | Fluxo | Estados | Eventos que mudam o estado | Arquivo do estado |
 | --- | --- | --- | --- |
-| EXEMPLO Criar projeto | `ocioso` → `salvando` → `salvo` / `erro` | clique em `btn-create-project` | `src/features/projects/projects.store.ts` |
+| Importar boletim | `fechado` → `aberto` → `conferindo` → `gravado` / fechado | `btn-importar-boletim`, `input-arquivo-boletim`, `btn-confirmar-importacao`, `btn-cancelar-importacao` | `boletim_acad_mico_unificado_2026.html` (`importedDraft`) |
 
 ## 4. Como manter
 

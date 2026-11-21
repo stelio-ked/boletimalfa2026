@@ -10,4 +10,10 @@ if [ -n "$PY" ]; then
   "$PY" .ai-agent/scripts/check_md_locations.py
 fi
 
+# Arquivos gerados (.claude/) precisam ir no mesmo commit da fonte (.ai-agent/).
+if ! git diff --quiet -- .claude .ai-agent/VERSION; then
+  echo "Há mudanças não adicionadas em .claude/ ou .ai-agent/VERSION. Rode 'git add .claude .ai-agent' e tente de novo."
+  exit 1
+fi
+
 node .ai-agent/helpers/verify.js --static --allow-empty
