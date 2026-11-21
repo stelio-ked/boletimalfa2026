@@ -15,3 +15,4 @@ TECH_ASSESSMENT.md
 # Monorepo: descomente se quiser manter README em cada app/pacote
 # apps/*/README.md
 # packages/*/README.md
+# teste de guardrail do automerge
