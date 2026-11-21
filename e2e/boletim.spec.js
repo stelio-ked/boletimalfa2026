@@ -18,6 +18,58 @@ test('abre o boletim, carrega o banco e não gera erro no console', async ({ pag
   await expect(page.getByTestId('status-banco')).toContainText('SQLite + IndexedDB Ativo', { timeout: 30_000 });
   await expect(page.getByTestId('seletor-alunos').locator('button').first()).toBeVisible();
   await expect(page.getByTestId('active-student-name')).not.toBeEmpty();
+  // Média geral do aluno selecionado, perto do nome.
+  await expect(page.getByTestId('active-student-media-geral')).toHaveText(/^\d+,\d$/);
 
   expect(errors, errors.join('\n')).toEqual([]);
+});
+
+test.describe('média geral do aluno selecionado', () => {
+  /** @param {import('@playwright/test').Page} page */
+  async function abrir(page) {
+    await page.goto(APP_URL);
+    await expect(page.getByTestId('status-banco')).toContainText('SQLite + IndexedDB Ativo', { timeout: 30_000 });
+    const media = page.getByTestId('active-student-media-geral');
+    await expect(media).toHaveText(/^\d+,\d$/);
+    return media;
+  }
+
+  test('trocar de aluno atualiza a média geral', async ({ page }) => {
+    const media = await abrir(page);
+    const pills = page.getByTestId('seletor-alunos').locator('button');
+    test.skip((await pills.count()) < 2, 'precisa de pelo menos dois alunos');
+
+    const nomeAntes = await page.getByTestId('active-student-name').innerText();
+    const antes = await media.innerText();
+
+    await pills.nth(1).click();
+    await expect(page.getByTestId('active-student-name')).not.toHaveText(nomeAntes);
+    await expect(media).not.toHaveText(antes);
+
+    // Voltar ao primeiro aluno devolve a média original.
+    await pills.nth(0).click();
+    await expect(page.getByTestId('active-student-name')).toHaveText(nomeAntes);
+    await expect(media).toHaveText(antes);
+  });
+
+  test('aplicar uma simulação altera a média geral', async ({ page }) => {
+    const media = await abrir(page);
+    const antes = await media.innerText();
+
+    await page.getByTestId('btn-simular-realista').click();
+
+    await expect(media).not.toHaveText(antes);
+    await expect(media).toHaveText(/^\d+,\d$/);
+  });
+
+  test('"Limpar simulações" devolve a média inicial', async ({ page }) => {
+    const media = await abrir(page);
+    const inicial = await media.innerText();
+
+    await page.getByTestId('btn-simular-realista').click();
+    await expect(media).not.toHaveText(inicial);
+
+    await page.getByTestId('btn-limpar-simulacoes').click();
+    await expect(media).toHaveText(inicial);
+  });
 });
