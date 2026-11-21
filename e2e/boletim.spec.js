@@ -102,4 +102,15 @@ test.describe('média geral do aluno selecionado', () => {
     await page.getByTestId('btn-limpar-simulacoes').click();
     expect(await conferir()).toBe(inicial);
   });
+
+  test('o selo tem tooltip explicando o cálculo e o mantém ao simular', async ({ page }) => {
+    await abrir(page);
+    const selo = page.getByTestId('selo-media-geral');
+    const texto = 'Média simples das médias finais das disciplinas';
+    await expect(selo).toHaveAttribute('title', texto);
+
+    // A troca de cor não pode apagar o tooltip.
+    await page.getByTestId('btn-simular-minimo').click();
+    await expect(selo).toHaveAttribute('title', texto);
+  });
 });
