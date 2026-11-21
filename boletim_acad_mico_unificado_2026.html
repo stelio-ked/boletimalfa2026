@@ -174,7 +174,7 @@
                         <span class="text-[11px] font-bold bg-brand-50 text-brand-700 border border-brand-200 px-2.5 py-0.5 rounded-full" id="activeStudentSegment">
                             Ensino Fundamental Anos Finais
                         </span>
-                        <span class="text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded-full" title="Média das médias finais de todas as disciplinas">Média geral: <strong id="activeStudentOverallAvg" data-testid="active-student-media-geral">-</strong></span>
+                        <span id="activeStudentOverallBadge" data-testid="selo-media-geral" data-faixa="aprovado" class="text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded-full" title="Média das médias finais de todas as disciplinas">Média geral: <strong id="activeStudentOverallAvg" data-testid="active-student-media-geral">-</strong></span>
                     </div>
                     <div class="text-xs sm:text-sm text-slate-600 mt-1 flex flex-wrap gap-x-5 gap-y-1">
                         <span><i class="fa-solid fa-graduation-cap text-brand-600 me-1"></i>Turma: <strong class="text-slate-900" id="activeStudentTurma" data-testid="active-student-turma">7º ano A - M</strong></span>
@@ -1331,7 +1331,17 @@
             const el = document.getElementById('activeStudentOverallAvg');
             if (!el) return;
             const avgs = grades.map(row => calculateSubject(row).finalAvg).filter(v => v !== null && v !== undefined && !isNaN(v));
-            el.innerText = avgs.length ? fmt(avgs.reduce((a, b) => a + b, 0) / avgs.length) : '-';
+            const avg = avgs.length ? round1(avgs.reduce((a, b) => a + b, 0) / avgs.length) : null;
+            el.innerText = fmt(avg);
+
+            // Verde na meta (>= TARGET_AVG), vermelho abaixo; decide pelo valor exibido (1 casa).
+            const badge = document.getElementById('activeStudentOverallBadge');
+            if (!badge || avg === null) return;
+            const ok = avg >= TARGET_AVG;
+            badge.dataset.faixa = ok ? 'aprovado' : 'abaixo';
+            badge.className = 'text-[11px] font-bold border px-2.5 py-0.5 rounded-full ' + (ok
+                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                : 'bg-rose-50 text-rose-700 border-rose-200');
         }
 
         function renderActiveStudentBanner(student) {
