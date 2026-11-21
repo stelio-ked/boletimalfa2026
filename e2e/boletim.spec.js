@@ -106,7 +106,7 @@ test.describe('média geral do aluno selecionado', () => {
   test('o selo tem tooltip explicando o cálculo e o mantém ao simular', async ({ page }) => {
     await abrir(page);
     const selo = page.getByTestId('selo-media-geral');
-    const texto = 'Média simples das médias finais das disciplinas';
+    const texto = 'Média simples das médias finais das disciplinas feitas';
     await expect(selo).toHaveAttribute('title', texto);
 
     // A troca de cor não pode apagar o tooltip.
